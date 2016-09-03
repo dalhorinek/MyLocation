@@ -13,6 +13,8 @@ class MyLocation: NSObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     let geocoder = CLGeocoder()
     
+    var showAddress: Boolean = false
+    
     func locationManager(_ manager: CLLocationManager,
                          didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .notDetermined {
@@ -30,15 +32,22 @@ class MyLocation: NSObject, CLLocationManagerDelegate {
         if locations.count > 0 {
             let location: CLLocation = locations[0]
             let coordinate = location.coordinate
-            print("\(coordinate.latitude) \(coordinate.longitude)")
-            geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
-                let possibleAddress: CLPlacemark? = placemarks?.first
+            
+            if (showAddress) {
+                geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
+                    let possibleAddress: CLPlacemark? = placemarks?.first
                 
-                if let address = possibleAddress {
-                    print("\(address.name!) \(address.administrativeArea!) \(address.country!)")
+                    print("\(coordinate.latitude) \(coordinate.longitude)")
+
+                    if let address = possibleAddress {
+                        print("\(address.name!), \(address.administrativeArea!), \(address.country!)")
+                    }
                     exit(0)
-                }
-            })
+                })
+            } else {
+                print("\(coordinate.latitude) \(coordinate.longitude)")
+                exit(0)
+            }
         }
     }
     
@@ -62,7 +71,28 @@ class MyLocation: NSObject, CLLocationManagerDelegate {
     }
 }
 
+func help() {
+    print("MyLocation ")
+    print("")
+    print("Prints lat lng coordinates")
+    print("")
+    print(" -a   show address\n")
+}
+
 let ml = MyLocation()
+
+for (i, argument) in Process.arguments.enumerated() {
+    switch argument {
+        case "-h":
+            help()
+            exit(0)
+        case "-a":
+            ml.showAddress = true
+        default:
+            break
+    }
+}
+
 ml.start()
 
 autoreleasepool({
