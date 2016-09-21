@@ -13,7 +13,7 @@ class MyLocation: NSObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     let geocoder = CLGeocoder()
     
-    var showAddress: Boolean = false
+    var showAddress: DarwinBoolean = false
     
     func locationManager(_ manager: CLLocationManager,
                          didChangeAuthorization status: CLAuthorizationStatus) {
@@ -33,7 +33,7 @@ class MyLocation: NSObject, CLLocationManagerDelegate {
             let location: CLLocation = locations[0]
             let coordinate = location.coordinate
             
-            if (showAddress) {
+            if (showAddress).boolValue {
                 geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
                     let possibleAddress: CLPlacemark? = placemarks?.first
                 
@@ -81,7 +81,7 @@ func help() {
 
 let ml = MyLocation()
 
-for (i, argument) in Process.arguments.enumerated() {
+for (i, argument) in CommandLine.arguments.enumerated() {
     switch argument {
         case "-h":
             help()
@@ -95,7 +95,7 @@ for (i, argument) in Process.arguments.enumerated() {
 
 ml.start()
 
-autoreleasepool({
-    var runLoop: RunLoop = RunLoop.main()
+autoreleasepool(invoking: {
+    var runLoop: RunLoop = RunLoop.main
     runLoop.run()
 })
