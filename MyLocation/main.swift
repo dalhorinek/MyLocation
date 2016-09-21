@@ -26,6 +26,10 @@ class MyLocation: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    func locationManager(_ manager: CLLocationManager!, didFailWithError error: Error!) {
+        exit(1)
+    }
+
     func locationManager(_ manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation]) {
         
